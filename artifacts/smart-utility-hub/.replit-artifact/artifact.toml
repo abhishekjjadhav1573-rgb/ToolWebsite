@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Smart Utility Hub"
+version = "1.0.0"
+id = "artifacts/smart-utility-hub"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 19327
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/smart-utility-hub run dev"
+
+[services.env]
+PORT = "19327"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/smart-utility-hub", "run", "build"]
+publicDir = "artifacts/smart-utility-hub/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

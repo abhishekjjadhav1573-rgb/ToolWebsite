@@ -1,0 +1,230 @@
+Create a modern **single-page tools website** called **"Smart Utility Hub"** using **HTML, CSS, and JavaScript**.
+
+The website must have a **clean, minimal, professional design** similar to modern SaaS websites.
+
+IMPORTANT DESIGN REQUIREMENTS:
+
+• The website must be **single page (SPA style)**.
+• All tools should appear **on the same page dynamically when selected** (do not reload the page).
+• Use **JavaScript to show/hide tools** when users click a tool from the sidebar or menu.
+• The layout should be **fast, lightweight, and SEO friendly**.
+• The design should look **modern, clean, and professional**.
+
+DESIGN STYLE:
+
+• Minimal UI
+• White background with soft shadows
+• Rounded cards
+• Smooth hover effects
+• Professional typography
+• Responsive mobile-first design
+• Smooth transitions when switching tools
+
+ADS DESIGN REQUIREMENTS:
+
+The website will use **Google AdSense**, so include **dedicated ad spaces** that blend naturally with the layout.
+
+Important rules:
+
+• Ads must **not break the layout or visual design**
+• Ads must **look integrated and balanced with the UI**
+• Use **clean placeholder containers labeled "Ad Space"**
+• Ads should appear inside **soft bordered containers or cards**
+• Ad placement should **not interrupt tool usability**
+
+Recommended ad placements:
+
+• One **leaderboard ad below the header**
+• One **sidebar ad block** below tool categories
+• One **ad space between tool sections** in the main content
+• One **footer ad block above the footer**
+
+All ad containers must:
+
+• Match the website card style
+• Have proper spacing and margins
+• Be responsive for mobile and desktop
+• Avoid cluttering the interface
+
+LAYOUT STRUCTURE:
+
+Top Navigation Bar:
+• Website Logo (Smart Utility Hub)
+• Navigation links:
+
+Home
+Finance Tools
+Health Tools
+Math Tools
+Utility Tools
+About
+Contact
+
+Below the header include a **wide ad container (Ad Space)** designed as a clean horizontal banner that blends with the page layout.
+
+Main Layout:
+
+Left Sidebar (Tool Categories)
+
+Finance Tools
+
+* EMI Calculator
+* SIP Calculator
+* Compound Interest Calculator
+* GST Calculator
+* Income Tax Calculator
+
+Health Tools
+
+* BMI Calculator
+* Calorie Calculator
+
+Math Tools
+
+* Percentage Calculator
+* Average Calculator
+
+Utility Tools
+
+* Age Calculator
+* Password Generator
+* QR Code Generator
+
+Below the sidebar tool list add a **small ad container labeled "Ad Space"** designed as a card so it fits naturally in the sidebar.
+
+Main Content Area:
+
+When a user clicks a tool in the sidebar, that tool should **load inside the main content area without page refresh**.
+
+Each tool should appear inside a **card layout with title, inputs, calculate button, and result section**.
+
+Between some tool sections add **subtle ad containers labeled "Ad Space"** that match the UI design and spacing.
+
+TOOLS TO BUILD:
+
+Finance Tools:
+
+1. EMI Calculator
+   Inputs:
+
+* Loan Amount
+* Interest Rate
+* Loan Tenure (months/years)
+
+2. SIP Calculator
+   Inputs:
+
+* Monthly Investment
+* Interest Rate
+* Investment Duration
+
+3. Compound Interest Calculator
+   Inputs:
+
+* Principal Amount
+* Interest Rate
+* Time Period
+
+4. GST Calculator
+   Inputs:
+
+* Amount
+* GST Rate
+  Options:
+* Add GST
+* Remove GST
+
+5. Income Tax Calculator
+   Inputs:
+
+* Annual Income
+* Tax Percentage
+
+Health Tools:
+
+6. BMI Calculator
+   Inputs:
+
+* Weight
+* Height
+
+7. Calorie Calculator
+   Inputs:
+
+* Age
+* Weight
+* Height
+* Activity Level
+
+Math Tools:
+
+8. Percentage Calculator
+   Calculate percentage between numbers.
+
+9. Average Calculator
+   Calculate average of numbers.
+
+Utility Tools:
+
+10. Age Calculator
+    Input: Date of Birth
+
+11. Password Generator
+    Options:
+
+* Length
+* Uppercase
+* Numbers
+* Symbols
+
+Include a **copy button** to copy the generated password.
+
+12. QR Code Generator
+    Input: Text or URL
+    Generate QR code instantly.
+
+ADDITIONAL WEBSITE SECTIONS:
+
+Hero Section:
+Title: "Free Smart Calculators & Utility Tools"
+Subtitle: "Simple tools to calculate finance, health, math, and everyday utilities."
+CTA button: "Explore Tools"
+
+Footer Section:
+
+Include navigation links to important pages.
+
+Above the footer include a **large ad container labeled "Ad Space"** designed as a clean banner that blends with the page layout.
+
+IMPORTANT PAGES (for Google AdSense approval):
+
+Create separate pages for:
+
+Privacy Policy
+Terms & Conditions
+Disclaimer
+About Us
+Contact Us
+
+These pages must contain **professional placeholder text** and follow a clean minimal layout.
+
+TECHNICAL REQUIREMENTS:
+
+• Pure HTML, CSS, JavaScript
+• No heavy frameworks
+• SEO-friendly HTML structure
+• Fast loading performance
+• Clean and well-structured code
+• Fully responsive for mobile and desktop
+
+EXTRA FEATURES:
+
+• Smooth tool switching animation
+• Sticky sidebar for tool navigation
+• Instant calculations where possible
+• Clean input validation and error handling
+• Modern icons for tools
+• Simple card-based UI system
+• Subtle UI animations and hover effects
+
+The final result should look like a **modern SaaS-style tools website** similar to professional calculator or utility platforms, with **well-integrated ad placements that maintain the beauty and usability of the website**.

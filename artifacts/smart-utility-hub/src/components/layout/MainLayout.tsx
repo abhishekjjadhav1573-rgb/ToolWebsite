@@ -31,7 +31,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
             <div className="bg-primary p-1.5 rounded-lg">
               <Box className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg hidden sm:inline-block">Smart Utility Hub</span>
+            <span className="font-display font-bold text-lg hidden sm:inline-block">Smart Fin Metrics</span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-6 text-sm font-medium ml-6">
@@ -130,7 +130,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <Box className="h-6 w-6 text-primary" />
-            <span className="font-display font-bold text-lg">Smart Utility Hub</span>
+            <span className="font-display font-bold text-lg">Smart Fin Metrics</span>
           </div>
           
           <div className="flex gap-6 text-sm font-medium text-muted-foreground">
@@ -145,7 +145,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <div className="container px-4 md:px-6 mt-8 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Smart Utility Hub. All rights reserved.
+          &copy; {new Date().getFullYear()} Smart Fin Metrics. All rights reserved.
         </div>
       </footer>
     </div>

@@ -26,6 +26,14 @@ const C = {
 const fmt  = (n: number, d = 2) => n.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtI = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
 
+const formatNumber = (value: string) => {
+  const num = parseFloat(value.replace(/,/g, ''));
+  if (isNaN(num)) return value;
+  return num.toLocaleString('en-IN');
+};
+
+const parseFormattedNumber = (value: string) => parseFloat(value.replace(/,/g, ''));
+
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="space-y-1.5">
     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 pb-1 border-b border-border">{title}</p>
@@ -96,15 +104,15 @@ const LineTooltip = ({ active, payload, label }: any) =>
 
 /* ─── EMI Calculator ─── */
 export function EmiCalculator() {
-  const [amount, setAmount] = useState("500000");
-  const [rate, setRate]     = useState("8.5");
-  const [tenure, setTenure] = useState("5");
+  const [amountDisplay, setAmountDisplay] = useState(formatNumber("500000"));
+  const [rateDisplay, setRateDisplay]     = useState(formatNumber("8.5"));
+  const [tenureDisplay, setTenureDisplay] = useState(formatNumber("5"));
   const [tenureType, setTenureType] = useState<"years"|"months">("years");
   const [result, setResult] = useState<{ emi: number; total: number; interest: number; n: number; p: number } | null>(null);
 
   const calculate = () => {
-    const p = parseFloat(amount), r = parseFloat(rate) / 12 / 100;
-    const n = tenureType === "years" ? parseFloat(tenure) * 12 : parseFloat(tenure);
+    const p = parseFormattedNumber(amountDisplay), r = parseFormattedNumber(rateDisplay) / 12 / 100;
+    const n = tenureType === "years" ? parseFormattedNumber(tenureDisplay) * 12 : parseFormattedNumber(tenureDisplay);
     if (p > 0 && r > 0 && n > 0) {
       const emi   = (p * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
       const total = emi * n;
@@ -121,12 +129,12 @@ export function EmiCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>EMI Calculator</CardTitle><CardDescription>Calculate your equated monthly installment</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Loan Amount (₹)</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Interest Rate (% p.a.)</Label><Input type="number" value={rate} onChange={e => setRate(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Loan Amount (₹)</Label><Input type="text" value={amountDisplay} onChange={e => setAmountDisplay(e.target.value)} onBlur={() => setAmountDisplay(formatNumber(amountDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Interest Rate (% p.a.)</Label><Input type="text" value={rateDisplay} onChange={e => setRateDisplay(e.target.value)} onBlur={() => setRateDisplay(formatNumber(rateDisplay))} className="bg-background" /></div>
           <div className="space-y-2">
             <Label>Loan Tenure</Label>
             <div className="flex gap-3">
-              <Input type="number" value={tenure} onChange={e => setTenure(e.target.value)} className="flex-1 bg-background" />
+              <Input type="text" value={tenureDisplay} onChange={e => setTenureDisplay(e.target.value)} onBlur={() => setTenureDisplay(formatNumber(tenureDisplay))} className="flex-1 bg-background" />
               <Select value={tenureType} onValueChange={(v: "years"|"months") => setTenureType(v)}>
                 <SelectTrigger className="w-[110px] bg-background"><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="years">Years</SelectItem><SelectItem value="months">Months</SelectItem></SelectContent>
@@ -170,19 +178,20 @@ export function EmiCalculator() {
 
 /* ─── SIP Calculator ─── */
 export function SipCalculator() {
-  const [monthly, setMonthly] = useState("5000");
-  const [rate, setRate]       = useState("12");
-  const [years, setYears]     = useState("10");
+  const [monthlyDisplay, setMonthlyDisplay] = useState(formatNumber("5000"));
+  const [rateDisplay, setRateDisplay]       = useState(formatNumber("12"));
+  const [yearsDisplay, setYearsDisplay]     = useState(formatNumber("10"));
   const [result, setResult]   = useState<{ invested: number; returns: number; total: number; cagr: number; growthPct: number; chartData: any[] } | null>(null);
 
   const calculate = () => {
-    const P = parseFloat(monthly), i = parseFloat(rate) / 100 / 12, n = parseFloat(years) * 12;
+    const P = parseFormattedNumber(monthlyDisplay), i = parseFormattedNumber(rateDisplay) / 100 / 12, n = parseFormattedNumber(yearsDisplay) * 12;
     if (P > 0 && i > 0 && n > 0) {
       const total    = P * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
       const invested = P * n;
-      const cagr     = (Math.pow(total / invested, 1 / parseFloat(years)) - 1) * 100;
+      const yearsNum = parseFormattedNumber(yearsDisplay);
+      const cagr     = (Math.pow(total / invested, 1 / yearsNum) - 1) * 100;
       const chartData = [];
-      for (let y = 1; y <= parseFloat(years); y++) {
+      for (let y = 1; y <= yearsNum; y++) {
         const mn  = y * 12;
         const val = P * ((Math.pow(1 + i, mn) - 1) / i) * (1 + i);
         chartData.push({ year: `Y${y}`, Invested: Math.round(P * mn), Returns: Math.round(val - P * mn) });
@@ -196,16 +205,16 @@ export function SipCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>SIP Calculator</CardTitle><CardDescription>Estimate your mutual fund SIP returns</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Monthly Investment (₹)</Label><Input type="number" value={monthly} onChange={e => setMonthly(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Expected Return Rate (% p.a.)</Label><Input type="number" value={rate} onChange={e => setRate(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Investment Duration (Years)</Label><Input type="number" value={years} onChange={e => setYears(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Monthly Investment (₹)</Label><Input type="text" value={monthlyDisplay} onChange={e => setMonthlyDisplay(e.target.value)} onBlur={() => setMonthlyDisplay(formatNumber(monthlyDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Expected Return Rate (% p.a.)</Label><Input type="text" value={rateDisplay} onChange={e => setRateDisplay(e.target.value)} onBlur={() => setRateDisplay(formatNumber(rateDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Investment Duration (Years)</Label><Input type="text" value={yearsDisplay} onChange={e => setYearsDisplay(e.target.value)} onBlur={() => setYearsDisplay(formatNumber(yearsDisplay))} className="bg-background" /></div>
           <Button onClick={calculate} className="w-full h-11 font-semibold rounded-xl">Calculate Returns</Button>
         </CardContent>
       </Card>
 
       {result ? (
         <ResultPanel>
-          <Hero label="Final Maturity Value" value={fmtI(result.total)} sub={`after ${years} years`} />
+          <Hero label="Final Maturity Value" value={fmtI(result.total)} sub={`after ${parseFormattedNumber(yearsDisplay)} years`} />
           <Section title="Investment Summary">
             <Row label="Total Invested"    value={fmtI(result.invested)} />
             <Row label="Estimated Returns" value={fmtI(result.returns)} accent />
@@ -248,14 +257,14 @@ export function SipCalculator() {
 
 /* ─── Compound Interest Calculator ─── */
 export function CompoundInterestCalculator() {
-  const [principal, setPrincipal] = useState("100000");
-  const [rate, setRate]           = useState("8");
-  const [years, setYears]         = useState("5");
+  const [principalDisplay, setPrincipalDisplay] = useState(formatNumber("100000"));
+  const [rateDisplay, setRateDisplay]           = useState(formatNumber("8"));
+  const [yearsDisplay, setYearsDisplay]         = useState(formatNumber("5"));
   const [freq, setFreq]           = useState("4");
   const [result, setResult]       = useState<{ amount: number; interest: number; ear: number; growthPct: number; doubling: number; chartData: any[] } | null>(null);
 
   const calculate = () => {
-    const P = parseFloat(principal), r = parseFloat(rate) / 100, t = parseFloat(years), n = parseFloat(freq);
+    const P = parseFormattedNumber(principalDisplay), r = parseFormattedNumber(rateDisplay) / 100, t = parseFormattedNumber(yearsDisplay), n = parseFloat(freq);
     if (P > 0 && r > 0 && t > 0) {
       const amount   = P * Math.pow(1 + r / n, n * t);
       const ear      = (Math.pow(1 + r / n, n) - 1) * 100;
@@ -275,9 +284,9 @@ export function CompoundInterestCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>Compound Interest Calculator</CardTitle><CardDescription>See how your money grows with compounding</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Principal Amount (₹)</Label><Input type="number" value={principal} onChange={e => setPrincipal(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Interest Rate (% p.a.)</Label><Input type="number" value={rate} onChange={e => setRate(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="number" value={years} onChange={e => setYears(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Principal Amount (₹)</Label><Input type="text" value={principalDisplay} onChange={e => setPrincipalDisplay(e.target.value)} onBlur={() => setPrincipalDisplay(formatNumber(principalDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Interest Rate (% p.a.)</Label><Input type="text" value={rateDisplay} onChange={e => setRateDisplay(e.target.value)} onBlur={() => setRateDisplay(formatNumber(rateDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="text" value={yearsDisplay} onChange={e => setYearsDisplay(e.target.value)} onBlur={() => setYearsDisplay(formatNumber(yearsDisplay))} className="bg-background" /></div>
           <div className="space-y-2">
             <Label>Compounding Frequency</Label>
             <Select value={freq} onValueChange={setFreq}>
@@ -296,9 +305,9 @@ export function CompoundInterestCalculator() {
         <ResultPanel>
           <Hero label="Final Value" value={fmtI(result.amount)} sub={`${freqLabel[freq]} compounding`} />
           <Section title="Interest Summary">
-            <Row label="Principal Amount"    value={fmtI(parseFloat(principal))} />
+            <Row label="Principal Amount"    value={fmtI(parseFormattedNumber(principalDisplay))} />
             <Row label="Total Interest"      value={fmtI(result.interest)} accent />
-            <SplitBar leftLabel="Principal"  leftPct={(parseFloat(principal) / result.amount) * 100} rightLabel="Interest" />
+            <SplitBar leftLabel="Principal"  leftPct={(parseFormattedNumber(principalDisplay) / result.amount) * 100} rightLabel="Interest" />
           </Section>
           <Section title="Growth Metrics">
             <Row label="Effective Annual Rate (EAR)" value={`${result.ear.toFixed(3)}%`} accent />
@@ -337,13 +346,13 @@ export function CompoundInterestCalculator() {
 
 /* ─── GST Calculator ─── */
 export function GstCalculator() {
-  const [amount, setAmount] = useState("10000");
+  const [amountDisplay, setAmountDisplay] = useState(formatNumber("10000"));
   const [rate, setRate]     = useState("18");
   const [mode, setMode]     = useState<"add"|"remove">("add");
   const [result, setResult] = useState<{ base: number; gst: number; total: number; cgst: number; sgst: number; taxImpact: number } | null>(null);
 
   const calculate = () => {
-    const a = parseFloat(amount), r = parseFloat(rate);
+    const a = parseFormattedNumber(amountDisplay), r = parseFloat(rate);
     if (a > 0 && r >= 0) {
       let base: number, gst: number, total: number;
       if (mode === "add") { base = a; gst = a * (r / 100); total = a + gst; }
@@ -362,7 +371,7 @@ export function GstCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>GST Calculator</CardTitle><CardDescription>Add or remove Goods &amp; Services Tax</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Amount (₹)</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Amount (₹)</Label><Input type="text" value={amountDisplay} onChange={e => setAmountDisplay(e.target.value)} onBlur={() => setAmountDisplay(formatNumber(amountDisplay))} className="bg-background" /></div>
           <div className="space-y-2">
             <Label>GST Rate (%)</Label>
             <Select value={rate} onValueChange={setRate}>
@@ -417,16 +426,16 @@ export function GstCalculator() {
 
 /* ─── Income Tax Calculator ─── */
 export function IncomeTaxCalculator() {
-  const [income, setIncome]     = useState("1000000");
-  const [taxPct, setTaxPct]     = useState("20");
-  const [std, setStd]           = useState("50000");
-  const [ded80c, setDed80c]     = useState("150000");
+  const [incomeDisplay, setIncomeDisplay]     = useState(formatNumber("1000000"));
+  const [taxPctDisplay, setTaxPctDisplay]     = useState(formatNumber("20"));
+  const [stdDisplay, setStdDisplay]           = useState(formatNumber("50000"));
+  const [ded80cDisplay, setDed80cDisplay]     = useState(formatNumber("150000"));
   const [result, setResult]     = useState<{ gross: number; stdDed: number; sec80C: number; taxable: number; tax: number; net: number; effectiveRate: number; monthlyNet: number; monthlyTax: number } | null>(null);
 
   const calculate = () => {
-    const gross = parseFloat(income), taxP = parseFloat(taxPct);
-    const stdDed = Math.min(parseFloat(std) || 0, gross);
-    const sec80C = Math.min(parseFloat(ded80c) || 0, 150000);
+    const gross = parseFormattedNumber(incomeDisplay), taxP = parseFormattedNumber(taxPctDisplay);
+    const stdDed = Math.min(parseFormattedNumber(stdDisplay) || 0, gross);
+    const sec80C = Math.min(parseFormattedNumber(ded80cDisplay) || 0, 150000);
     if (gross > 0 && taxP >= 0) {
       const taxable = Math.max(gross - stdDed - sec80C, 0);
       const tax     = taxable * (taxP / 100);
@@ -444,10 +453,10 @@ export function IncomeTaxCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>Income Tax Calculator</CardTitle><CardDescription>Estimate your tax liability and take-home pay</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Annual Gross Income (₹)</Label><Input type="number" value={income} onChange={e => setIncome(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Tax Rate (%)</Label><Input type="number" value={taxPct} onChange={e => setTaxPct(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Standard Deduction (₹)</Label><Input type="number" value={std} onChange={e => setStd(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>80C Deductions (₹, max ₹1,50,000)</Label><Input type="number" value={ded80c} onChange={e => setDed80c(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Annual Gross Income (₹)</Label><Input type="text" value={incomeDisplay} onChange={e => setIncomeDisplay(e.target.value)} onBlur={() => setIncomeDisplay(formatNumber(incomeDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Tax Rate (%)</Label><Input type="text" value={taxPctDisplay} onChange={e => setTaxPctDisplay(e.target.value)} onBlur={() => setTaxPctDisplay(formatNumber(taxPctDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Standard Deduction (₹)</Label><Input type="text" value={stdDisplay} onChange={e => setStdDisplay(e.target.value)} onBlur={() => setStdDisplay(formatNumber(stdDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>80C Deductions (₹, max ₹1,50,000)</Label><Input type="text" value={ded80cDisplay} onChange={e => setDed80cDisplay(e.target.value)} onBlur={() => setDed80cDisplay(formatNumber(ded80cDisplay))} className="bg-background" /></div>
           <Button onClick={calculate} className="w-full h-11 font-semibold rounded-xl">Calculate Tax</Button>
         </CardContent>
       </Card>
@@ -493,14 +502,14 @@ export function IncomeTaxCalculator() {
 
 /* ─── FD Calculator ─── */
 export function FdCalculator() {
-  const [principal, setPrincipal] = useState("100000");
-  const [rate, setRate]           = useState("7.5");
-  const [years, setYears]         = useState("5");
+  const [principalDisplay, setPrincipalDisplay] = useState(formatNumber("100000"));
+  const [rateDisplay, setRateDisplay]           = useState(formatNumber("7.5"));
+  const [yearsDisplay, setYearsDisplay]         = useState(formatNumber("5"));
   const [freq, setFreq]           = useState("4");
   const [result, setResult]       = useState<{ maturity: number; interest: number; ear: number; growthPct: number; chartData: any[] } | null>(null);
 
   const calculate = () => {
-    const P = parseFloat(principal), r = parseFloat(rate) / 100, t = parseFloat(years), n = parseFloat(freq);
+    const P = parseFormattedNumber(principalDisplay), r = parseFormattedNumber(rateDisplay) / 100, t = parseFormattedNumber(yearsDisplay), n = parseFloat(freq);
     if (P > 0 && r > 0 && t > 0 && n > 0) {
       const maturity  = P * Math.pow(1 + r / n, n * t);
       const ear       = (Math.pow(1 + r / n, n) - 1) * 100;
@@ -520,9 +529,9 @@ export function FdCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>FD Calculator</CardTitle><CardDescription>Calculate Fixed Deposit maturity and returns</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Principal Amount (₹)</Label><Input type="number" value={principal} onChange={e => setPrincipal(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Annual Interest Rate (%)</Label><Input type="number" value={rate} onChange={e => setRate(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="number" value={years} onChange={e => setYears(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Principal Amount (₹)</Label><Input type="text" value={principalDisplay} onChange={e => setPrincipalDisplay(e.target.value)} onBlur={() => setPrincipalDisplay(formatNumber(principalDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Annual Interest Rate (%)</Label><Input type="text" value={rateDisplay} onChange={e => setRateDisplay(e.target.value)} onBlur={() => setRateDisplay(formatNumber(rateDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="text" value={yearsDisplay} onChange={e => setYearsDisplay(e.target.value)} onBlur={() => setYearsDisplay(formatNumber(yearsDisplay))} className="bg-background" /></div>
           <div className="space-y-2">
             <Label>Compounding Frequency</Label>
             <Select value={freq} onValueChange={setFreq}>
@@ -539,15 +548,15 @@ export function FdCalculator() {
 
       {result ? (
         <ResultPanel>
-          <Hero label="Maturity Value" value={fmtI(result.maturity)} sub={`${freqLabel[freq]} compounding · ${years} years`} />
+          <Hero label="Maturity Value" value={fmtI(result.maturity)} sub={`${freqLabel[freq]} compounding · ${parseFormattedNumber(yearsDisplay)} years`} />
           <Section title="FD Summary">
-            <Row label="Principal Deposited"     value={fmtI(parseFloat(principal))} />
+            <Row label="Principal Deposited"     value={fmtI(parseFormattedNumber(principalDisplay))} />
             <Row label="Interest Earned"         value={fmtI(result.interest)} accent />
             <Row label="Maturity Value"          value={fmtI(result.maturity)} />
-            <SplitBar leftLabel="Principal" leftPct={(parseFloat(principal) / result.maturity) * 100} rightLabel="Interest" />
+            <SplitBar leftLabel="Principal" leftPct={(parseFormattedNumber(principalDisplay) / result.maturity) * 100} rightLabel="Interest" />
           </Section>
           <Section title="Growth Metrics">
-            <Row label="Nominal Rate (p.a.)"          value={`${rate}%`} />
+            <Row label="Nominal Rate (p.a.)"          value={`${parseFormattedNumber(rateDisplay)}%`} />
             <Row label="Effective Annual Yield (EAR)" value={`${result.ear.toFixed(3)}%`} accent />
             <Row label="Overall Growth"               value={`${result.growthPct.toFixed(2)}%`} />
           </Section>
@@ -583,13 +592,13 @@ export function FdCalculator() {
 
 /* ─── RD Calculator ─── */
 export function RdCalculator() {
-  const [monthly, setMonthly] = useState("5000");
-  const [rate, setRate]       = useState("7");
-  const [years, setYears]     = useState("5");
+  const [monthlyDisplay, setMonthlyDisplay] = useState(formatNumber("5000"));
+  const [rateDisplay, setRateDisplay]       = useState(formatNumber("7"));
+  const [yearsDisplay, setYearsDisplay]     = useState(formatNumber("5"));
   const [result, setResult]   = useState<{ maturity: number; invested: number; interest: number; effectiveRate: number; growthPct: number; chartData: any[] } | null>(null);
 
   const calculate = () => {
-    const P = parseFloat(monthly), r = parseFloat(rate) / 100 / 4, t = parseFloat(years);
+    const P = parseFormattedNumber(monthlyDisplay), r = parseFormattedNumber(rateDisplay) / 100 / 4, t = parseFormattedNumber(yearsDisplay);
     const n = t * 12;
     if (P > 0 && r > 0 && n > 0) {
       let maturity = 0;
@@ -612,16 +621,16 @@ export function RdCalculator() {
       <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader><CardTitle>RD Calculator</CardTitle><CardDescription>Calculate Recurring Deposit maturity value</CardDescription></CardHeader>
         <CardContent className="space-y-5">
-          <div className="space-y-2"><Label>Monthly Deposit (₹)</Label><Input type="number" value={monthly} onChange={e => setMonthly(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Annual Interest Rate (%)</Label><Input type="number" value={rate} onChange={e => setRate(e.target.value)} className="bg-background" /></div>
-          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="number" value={years} onChange={e => setYears(e.target.value)} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Monthly Deposit (₹)</Label><Input type="text" value={monthlyDisplay} onChange={e => setMonthlyDisplay(e.target.value)} onBlur={() => setMonthlyDisplay(formatNumber(monthlyDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Annual Interest Rate (%)</Label><Input type="text" value={rateDisplay} onChange={e => setRateDisplay(e.target.value)} onBlur={() => setRateDisplay(formatNumber(rateDisplay))} className="bg-background" /></div>
+          <div className="space-y-2"><Label>Time Period (Years)</Label><Input type="text" value={yearsDisplay} onChange={e => setYearsDisplay(e.target.value)} onBlur={() => setYearsDisplay(formatNumber(yearsDisplay))} className="bg-background" /></div>
           <Button onClick={calculate} className="w-full h-11 font-semibold rounded-xl">Calculate Maturity</Button>
         </CardContent>
       </Card>
 
       {result ? (
         <ResultPanel>
-          <Hero label="Maturity Value" value={fmtI(result.maturity)} sub={`${parseInt(years) * 12} monthly deposits of ${fmtI(parseFloat(monthly))}`} />
+          <Hero label="Maturity Value" value={fmtI(result.maturity)} sub={`${Math.round(parseFormattedNumber(yearsDisplay)) * 12} monthly deposits of ${fmtI(parseFormattedNumber(monthlyDisplay))}`} />
           <Section title="Investment Summary">
             <Row label="Total Amount Invested"  value={fmtI(result.invested)} />
             <Row label="Total Interest Earned"  value={fmtI(result.interest)} accent />
@@ -631,7 +640,7 @@ export function RdCalculator() {
           <Section title="Return Metrics">
             <Row label="Effective Return Rate (CAGR)" value={`${result.effectiveRate.toFixed(2)}%`} accent />
             <Row label="Investment Growth"            value={`${result.growthPct.toFixed(2)}%`} />
-            <Row label="Nominal Rate Applied"         value={`${rate}% p.a.`} />
+            <Row label="Nominal Rate Applied"         value={`${parseFormattedNumber(rateDisplay)}% p.a.`} />
           </Section>
           <ChartWrap title="RD Growth Chart (Year by Year)">
             <ResponsiveContainer width="100%" height="100%">

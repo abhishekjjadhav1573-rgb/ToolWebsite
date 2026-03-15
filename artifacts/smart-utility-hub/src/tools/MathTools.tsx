@@ -7,6 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
+const formatNumber = (value: string) => {
+  const num = parseFloat(value.replace(/,/g, ''));
+  if (isNaN(num)) return value;
+  return num.toLocaleString('en-IN');
+};
+
+const parseFormattedNumber = (value: string) => parseFloat(value.replace(/,/g, ''));
+
 const ResultCard = ({ title, value, highlight = false }: { title: string, value: string, highlight?: boolean }) => (
   <div className={`p-4 rounded-xl border ${highlight ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border shadow-sm'}`}>
     <p className={`text-sm font-medium mb-1 ${highlight ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>{title}</p>
@@ -87,11 +95,11 @@ export function PercentageCalculator() {
 }
 
 export function ProfitLossCalculator() {
-  const [cost, setCost] = useState<string>("1000");
-  const [selling, setSelling] = useState<string>("1250");
-  const [extras, setExtras] = useState<string>("0");
-  const [units, setUnits] = useState<string>("100");
-  const [desiredPct, setDesiredPct] = useState<string>("20");
+  const [costDisplay, setCostDisplay] = useState<string>(formatNumber("1000"));
+  const [sellingDisplay, setSellingDisplay] = useState<string>(formatNumber("1250"));
+  const [extrasDisplay, setExtrasDisplay] = useState<string>(formatNumber("0"));
+  const [unitsDisplay, setUnitsDisplay] = useState<string>(formatNumber("100"));
+  const [desiredPctDisplay, setDesiredPctDisplay] = useState<string>(formatNumber("20"));
 
   type PLResult = {
     type: "Profit" | "Loss";
@@ -102,11 +110,11 @@ export function ProfitLossCalculator() {
   const [result, setResult] = useState<PLResult | null>(null);
 
   const calculate = () => {
-    const cp = parseFloat(cost) || 0;
-    const sp = parseFloat(selling) || 0;
-    const ex = parseFloat(extras) || 0;
-    const u  = parseFloat(units)  || 1;
-    const dp = parseFloat(desiredPct) || 0;
+    const cp = parseFormattedNumber(costDisplay) || 0;
+    const sp = parseFormattedNumber(sellingDisplay) || 0;
+    const ex = parseFormattedNumber(extrasDisplay) || 0;
+    const u  = parseFormattedNumber(unitsDisplay)  || 1;
+    const dp = parseFormattedNumber(desiredPctDisplay) || 0;
     if (cp <= 0) return;
 
     const totalCost = cp + ex;
@@ -149,23 +157,23 @@ export function ProfitLossCalculator() {
         <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label>Cost Price per Unit (₹)</Label>
-            <Input type="number" value={cost} onChange={(e) => setCost(e.target.value)} className="bg-background" />
+            <Input type="text" value={costDisplay} onChange={(e) => setCostDisplay(e.target.value)} onBlur={() => setCostDisplay(formatNumber(costDisplay))} className="bg-background" />
           </div>
           <div className="space-y-2">
             <Label>Selling Price per Unit (₹)</Label>
-            <Input type="number" value={selling} onChange={(e) => setSelling(e.target.value)} className="bg-background" />
+            <Input type="text" value={sellingDisplay} onChange={(e) => setSellingDisplay(e.target.value)} onBlur={() => setSellingDisplay(formatNumber(sellingDisplay))} className="bg-background" />
           </div>
           <div className="space-y-2">
             <Label>Additional Expenses per Unit (₹)</Label>
-            <Input type="number" value={extras} onChange={(e) => setExtras(e.target.value)} className="bg-background" placeholder="0" />
+            <Input type="text" value={extrasDisplay} onChange={(e) => setExtrasDisplay(e.target.value)} onBlur={() => setExtrasDisplay(formatNumber(extrasDisplay))} className="bg-background" placeholder="0" />
           </div>
           <div className="space-y-2">
             <Label>Units Sold</Label>
-            <Input type="number" value={units} onChange={(e) => setUnits(e.target.value)} className="bg-background" />
+            <Input type="text" value={unitsDisplay} onChange={(e) => setUnitsDisplay(e.target.value)} onBlur={() => setUnitsDisplay(formatNumber(unitsDisplay))} className="bg-background" />
           </div>
           <div className="space-y-2">
             <Label>Desired Profit % (for recommended price)</Label>
-            <Input type="number" value={desiredPct} onChange={(e) => setDesiredPct(e.target.value)} className="bg-background" />
+            <Input type="text" value={desiredPctDisplay} onChange={(e) => setDesiredPctDisplay(e.target.value)} onBlur={() => setDesiredPctDisplay(formatNumber(desiredPctDisplay))} className="bg-background" />
           </div>
           <Button onClick={calculate} className="w-full h-11 font-semibold rounded-xl">Calculate P&amp;L</Button>
         </CardContent>
@@ -181,8 +189,8 @@ export function ProfitLossCalculator() {
           </div>
 
           <Section title="Cost Summary">
-            <Row label="Cost Price (per unit)" value={fmtR(parseFloat(cost))} />
-            <Row label="Additional Expenses (per unit)" value={fmtR(parseFloat(extras) || 0)} />
+            <Row label="Cost Price (per unit)" value={fmtR(parseFormattedNumber(costDisplay))} />
+            <Row label="Additional Expenses (per unit)" value={fmtR(parseFormattedNumber(extrasDisplay) || 0)} />
             <Row label="Total Cost (per unit)" value={fmtR(result.totalCost)} accent />
             <Row label="Selling Price (per unit)" value={fmtR(result.sp)} />
           </Section>
@@ -196,14 +204,14 @@ export function ProfitLossCalculator() {
           </Section>
 
           <Section title="Volume Analysis">
-            <Row label="Units Sold" value={parseFloat(units).toLocaleString("en-IN")} />
+            <Row label="Units Sold" value={parseFormattedNumber(unitsDisplay).toLocaleString("en-IN")} />
             <Row label={`${result.type} per Unit`} value={fmtR(result.perUnit)} />
             <Row label={`Total ${result.type} (all units)`} value={fmtR(result.totalProfit)} accent />
           </Section>
 
           <Section title="Pricing Intelligence">
             <Row label="Break-even Price" value={fmtR(result.breakeven)} />
-            <Row label={`Recommended Price (at ${desiredPct}% profit)`} value={fmtR(result.recommended)} accent />
+            <Row label={`Recommended Price (at ${parseFormattedNumber(desiredPctDisplay)}% profit)`} value={fmtR(result.recommended)} accent />
           </Section>
 
           <div className="space-y-2">

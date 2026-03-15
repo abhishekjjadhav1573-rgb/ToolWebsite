@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "Smart Utility Hub"
+title = "Smart Fin Metrics"
 version = "1.0.0"
 id = "artifacts/smart-utility-hub"
 router = "path"

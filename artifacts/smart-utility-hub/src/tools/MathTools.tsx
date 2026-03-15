@@ -88,59 +88,128 @@ export function PercentageCalculator() {
 export function ProfitLossCalculator() {
   const [cost, setCost] = useState<string>("1000");
   const [selling, setSelling] = useState<string>("1250");
-  const [result, setResult] = useState<{ type: "Profit" | "Loss"; amount: number; percent: number } | null>(null);
+  const [extras, setExtras] = useState<string>("0");
+  const [units, setUnits] = useState<string>("100");
+  const [desiredPct, setDesiredPct] = useState<string>("20");
+
+  type PLResult = {
+    type: "Profit" | "Loss";
+    totalCost: number; sp: number; plAmount: number; plPct: number;
+    margin: number; markup: number; roi: number;
+    perUnit: number; totalProfit: number; breakeven: number; recommended: number;
+  };
+  const [result, setResult] = useState<PLResult | null>(null);
 
   const calculate = () => {
-    const cp = parseFloat(cost);
-    const sp = parseFloat(selling);
-    if (!isNaN(cp) && !isNaN(sp) && cp > 0) {
-      const diff = sp - cp;
-      setResult({
-        type: diff >= 0 ? "Profit" : "Loss",
-        amount: Math.abs(diff),
-        percent: (Math.abs(diff) / cp) * 100,
-      });
-    }
+    const cp = parseFloat(cost) || 0;
+    const sp = parseFloat(selling) || 0;
+    const ex = parseFloat(extras) || 0;
+    const u  = parseFloat(units)  || 1;
+    const dp = parseFloat(desiredPct) || 0;
+    if (cp <= 0) return;
+
+    const totalCost = cp + ex;
+    const diff = sp - totalCost;
+    const type: "Profit" | "Loss" = diff >= 0 ? "Profit" : "Loss";
+    const plAmount = Math.abs(diff);
+    const plPct    = (Math.abs(diff) / totalCost) * 100;
+    const margin   = sp > 0 ? (diff / sp) * 100 : 0;
+    const markup   = (diff / totalCost) * 100;
+    const roi      = (diff / totalCost) * 100;
+    const perUnit  = diff / u;
+    const totalProfit = diff * u;
+    const breakeven   = totalCost;
+    const recommended = totalCost * (1 + dp / 100);
+
+    setResult({ type, totalCost, sp, plAmount, plPct, margin, markup, roi, perUnit, totalProfit, breakeven, recommended });
   };
 
+  const fmtR = (n: number) => `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className="space-y-2">
+      <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70 pb-1 border-b border-border">{title}</p>
+      {children}
+    </div>
+  );
+  const Row = ({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) => (
+    <div className="flex items-center justify-between gap-2 py-1">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className={`text-sm font-semibold tabular-nums ${accent ? "text-primary" : "text-foreground"}`}>{value}</span>
+    </div>
+  );
+
   return (
-    <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-      <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm">
+    <div className="max-w-5xl mx-auto grid md:grid-cols-[380px_1fr] gap-8">
+      <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm h-fit">
         <CardHeader>
           <CardTitle>Profit &amp; Loss Calculator</CardTitle>
-          <CardDescription>Determine profit or loss from cost and selling price</CardDescription>
+          <CardDescription>Comprehensive profit analysis with all key metrics</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
-            <Label>Cost Price (₹)</Label>
+            <Label>Cost Price per Unit (₹)</Label>
             <Input type="number" value={cost} onChange={(e) => setCost(e.target.value)} className="bg-background" />
           </div>
           <div className="space-y-2">
-            <Label>Selling Price (₹)</Label>
+            <Label>Selling Price per Unit (₹)</Label>
             <Input type="number" value={selling} onChange={(e) => setSelling(e.target.value)} className="bg-background" />
           </div>
-          <Button onClick={calculate} className="w-full h-12 text-lg font-semibold rounded-xl">Calculate</Button>
+          <div className="space-y-2">
+            <Label>Additional Expenses per Unit (₹)</Label>
+            <Input type="number" value={extras} onChange={(e) => setExtras(e.target.value)} className="bg-background" placeholder="0" />
+          </div>
+          <div className="space-y-2">
+            <Label>Units Sold</Label>
+            <Input type="number" value={units} onChange={(e) => setUnits(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Desired Profit % (for recommended price)</Label>
+            <Input type="number" value={desiredPct} onChange={(e) => setDesiredPct(e.target.value)} className="bg-background" />
+          </div>
+          <Button onClick={calculate} className="w-full h-11 font-semibold rounded-xl">Calculate P&amp;L</Button>
         </CardContent>
       </Card>
 
-      <div className="space-y-6">
-        {result ? (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
-            <div className={`p-8 rounded-2xl border text-center shadow-inner ${result.type === "Profit" ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-              <p className="text-sm font-medium text-muted-foreground mb-1">Result</p>
-              <p className={`text-4xl font-display font-black ${result.type === "Profit" ? "text-green-600" : "text-red-600"}`}>{result.type}</p>
-              <p className={`text-2xl font-bold mt-1 ${result.type === "Profit" ? "text-green-600" : "text-red-600"}`}>₹{result.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-            </div>
-            <ResultCard title={`${result.type} Percentage`} value={`${result.percent.toFixed(2)}%`} highlight />
-            <ResultCard title="Cost Price" value={`₹${parseFloat(cost).toLocaleString('en-IN')}`} />
-            <ResultCard title="Selling Price" value={`₹${parseFloat(selling).toLocaleString('en-IN')}`} />
+      {result ? (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-5 bg-card/60 border border-border rounded-2xl p-5 shadow-sm">
+          <div className={`rounded-2xl border p-5 text-center ${result.type === "Profit" ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Result</p>
+            <p className={`text-3xl font-display font-black ${result.type === "Profit" ? "text-green-600" : "text-red-600"}`}>{result.type}</p>
+            <p className={`text-2xl font-bold mt-1 ${result.type === "Profit" ? "text-green-600" : "text-red-600"}`}>{fmtR(result.plAmount)} per unit</p>
+            <p className={`text-sm mt-1 ${result.type === "Profit" ? "text-green-500" : "text-red-400"}`}>{result.plPct.toFixed(2)}% {result.type === "Profit" ? "profit" : "loss"}</p>
           </div>
-        ) : (
-          <div className="h-full border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
-            Enter cost and selling price to see the result.
-          </div>
-        )}
-      </div>
+
+          <Section title="Cost Summary">
+            <Row label="Cost Price (per unit)" value={fmtR(parseFloat(cost))} />
+            <Row label="Additional Expenses (per unit)" value={fmtR(parseFloat(extras) || 0)} />
+            <Row label="Total Cost (per unit)" value={fmtR(result.totalCost)} accent />
+            <Row label="Selling Price (per unit)" value={fmtR(result.sp)} />
+          </Section>
+
+          <Section title="Profitability Metrics">
+            <Row label={`${result.type} Amount (per unit)`} value={fmtR(result.plAmount)} accent />
+            <Row label={`${result.type} Percentage`} value={`${result.plPct.toFixed(2)}%`} />
+            <Row label="Profit Margin" value={`${result.margin.toFixed(2)}%`} />
+            <Row label="Markup Percentage" value={`${result.markup.toFixed(2)}%`} />
+            <Row label="Return on Investment (ROI)" value={`${result.roi.toFixed(2)}%`} />
+          </Section>
+
+          <Section title="Volume Analysis">
+            <Row label="Units Sold" value={parseFloat(units).toLocaleString("en-IN")} />
+            <Row label={`${result.type} per Unit`} value={fmtR(result.perUnit)} />
+            <Row label={`Total ${result.type} (all units)`} value={fmtR(result.totalProfit)} accent />
+          </Section>
+
+          <Section title="Pricing Intelligence">
+            <Row label="Break-even Price" value={fmtR(result.breakeven)} />
+            <Row label={`Recommended Price (at ${desiredPct}% profit)`} value={fmtR(result.recommended)} accent />
+          </Section>
+        </div>
+      ) : (
+        <div className="h-full min-h-[220px] border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10 text-sm">
+          Enter cost and selling price to see the complete P&amp;L analysis.
+        </div>
+      )}
     </div>
   );
 }

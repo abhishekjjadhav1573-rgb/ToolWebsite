@@ -1,7 +1,5 @@
 {
   "buildCommand": "cd artifacts/smart-utility-hub && pnpm run build",
   "outputDirectory": "artifacts/smart-utility-hub/dist/public",
-  "installCommand": "pnpm install",
-  "framework": null,
-  "ignoreCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then echo \"Deploying frontend only\"; else echo \"Preview build\"; fi"
+  "installCommand": "pnpm install"
 }

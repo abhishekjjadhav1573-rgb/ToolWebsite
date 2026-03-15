@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 const ResultCard = ({ title, value, highlight = false }: { title: string, value: string, highlight?: boolean }) => (
   <div className={`p-4 rounded-xl border ${highlight ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border shadow-sm'}`}>
@@ -204,6 +205,32 @@ export function ProfitLossCalculator() {
             <Row label="Break-even Price" value={fmtR(result.breakeven)} />
             <Row label={`Recommended Price (at ${desiredPct}% profit)`} value={fmtR(result.recommended)} accent />
           </Section>
+
+          <div className="space-y-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 pb-1 border-b border-border">Profit Margin Visualization</p>
+            <div style={{ height: 160 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={[
+                    { name: "Cost", value: Math.round(result.totalCost) },
+                    { name: "Revenue", value: Math.round(result.sp) },
+                    { name: result.type, value: Math.round(result.plAmount) },
+                  ]}
+                  margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                  <YAxis tickFormatter={v => `₹${(v/1000).toFixed(1)}k`} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={52} />
+                  <Tooltip formatter={(v: any) => [`₹${Number(v).toLocaleString("en-IN")}`, ""]} contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }} />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#10b981" />
+                    <Cell fill={result.type === "Profit" ? "#10b981" : "#ef4444"} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="h-full min-h-[220px] border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10 text-sm">

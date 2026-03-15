@@ -92,6 +92,18 @@ Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used b
 
 Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
 
+### `artifacts/smart-utility-hub` (`@workspace/smart-utility-hub`)
+
+React + Vite SPA. 18 calculators and utilities across Finance, Health, Math, and Utility categories. Sidebar-based SPA navigation using wouter, all calculations are pure client-side.
+
+- **Tools:** EMI, SIP, Compound Interest, GST, Income Tax, FD, RD (Finance) · BMI, Calorie (Health) · Percentage, Average, Profit & Loss, Scientific Calculator (Math) · Age, Password, QR Code (Utility) · Image to PDF, Image Format Converter (Converter)
+- **Charts:** All finance tools include Recharts visualizations — Donut charts (EMI, GST, Income Tax), Stacked Area charts (SIP, Compound Interest, FD, RD), Bar chart (Profit & Loss)
+- **Result panels:** Structured sections — Hero metric, Investment/Cost Summary, Breakdown, Growth Metrics
+- **Key packages:** `recharts` (charts), `qrcode` + `@types/qrcode` (QR), `date-fns` (Age Calculator), `jspdf` (Image to PDF)
+- **Routing:** `/tool/:id` via wouter — tool IDs: `emi`, `sip`, `compound-interest`, `gst`, `income-tax`, `fd`, `rd`, `bmi`, `calorie`, `percentage`, `average`, `profit-loss`, `scientific`, `age`, `password`, `qrcode`, `image-to-pdf`, `image-converter`
+- **Design:** White/light-gray background, rounded cards, soft shadows, minimal professional. Do NOT change color scheme.
+- **Currency:** All Finance tools use ₹ (Indian Rupee) with `en-IN` locale
+
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.

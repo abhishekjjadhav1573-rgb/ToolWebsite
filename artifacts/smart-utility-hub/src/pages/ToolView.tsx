@@ -1,10 +1,11 @@
 import React from "react";
 import { useParams } from "wouter";
 import { toolsRegistry } from "@/lib/tool-registry";
-import { EmiCalculator, SipCalculator, CompoundInterestCalculator, GstCalculator, IncomeTaxCalculator } from "@/tools/FinanceTools";
+import { EmiCalculator, SipCalculator, CompoundInterestCalculator, GstCalculator, IncomeTaxCalculator, FdCalculator, RdCalculator } from "@/tools/FinanceTools";
 import { BmiCalculator, CalorieCalculator } from "@/tools/HealthTools";
-import { PercentageCalculator, AverageCalculator } from "@/tools/MathTools";
+import { PercentageCalculator, AverageCalculator, ProfitLossCalculator, ScientificCalculator } from "@/tools/MathTools";
 import { AgeCalculator, PasswordGenerator, QrCodeGenerator } from "@/tools/UtilityTools";
+import { ImageToPdfConverter, ImageFormatConverter } from "@/tools/ConverterTools";
 import NotFound from "@/pages/not-found";
 
 const toolComponents: Record<string, React.ComponentType> = {
@@ -13,13 +14,19 @@ const toolComponents: Record<string, React.ComponentType> = {
   "compound-interest": CompoundInterestCalculator,
   "gst": GstCalculator,
   "income-tax": IncomeTaxCalculator,
+  "fd": FdCalculator,
+  "rd": RdCalculator,
   "bmi": BmiCalculator,
   "calorie": CalorieCalculator,
   "percentage": PercentageCalculator,
   "average": AverageCalculator,
+  "profit-loss": ProfitLossCalculator,
+  "scientific": ScientificCalculator,
   "age": AgeCalculator,
   "password": PasswordGenerator,
   "qrcode": QrCodeGenerator,
+  "image-to-pdf": ImageToPdfConverter,
+  "image-converter": ImageFormatConverter,
 };
 
 export function ToolView() {

@@ -332,12 +332,146 @@ export function IncomeTaxCalculator() {
       <div className="space-y-6">
         {result ? (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
-            <ResultCard title="Take-Home Income" value={`$${result.net.toLocaleString()}`} highlight />
-            <ResultCard title="Total Tax" value={`$${result.tax.toLocaleString()}`} />
+            <ResultCard title="Take-Home Income" value={`₹${result.net.toLocaleString('en-IN')}`} highlight />
+            <ResultCard title="Total Tax" value={`₹${result.tax.toLocaleString('en-IN')}`} />
           </div>
         ) : (
           <div className="h-full border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
             Calculate your estimated post-tax income.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function FdCalculator() {
+  const [principal, setPrincipal] = useState<string>("100000");
+  const [rate, setRate] = useState<string>("7");
+  const [years, setYears] = useState<string>("5");
+  const [freq, setFreq] = useState<string>("4");
+  const [result, setResult] = useState<{ maturity: number, interest: number } | null>(null);
+
+  const calculate = () => {
+    const P = parseFloat(principal);
+    const r = parseFloat(rate) / 100;
+    const t = parseFloat(years);
+    const n = parseFloat(freq);
+    if (P > 0 && r > 0 && t > 0 && n > 0) {
+      const maturity = P * Math.pow(1 + r / n, n * t);
+      setResult({ maturity, interest: maturity - P });
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+      <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle>FD Calculator</CardTitle>
+          <CardDescription>Calculate your Fixed Deposit maturity amount</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label>Principal Amount (₹)</Label>
+            <Input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Annual Interest Rate (%)</Label>
+            <Input type="number" value={rate} onChange={(e) => setRate(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Time Period (Years)</Label>
+            <Input type="number" value={years} onChange={(e) => setYears(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Compounding Frequency</Label>
+            <Select value={freq} onValueChange={setFreq}>
+              <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Annually</SelectItem>
+                <SelectItem value="2">Semi-Annually</SelectItem>
+                <SelectItem value="4">Quarterly</SelectItem>
+                <SelectItem value="12">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={calculate} className="w-full h-12 text-lg font-semibold rounded-xl">Calculate Maturity</Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-6">
+        {result ? (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
+            <ResultCard title="Maturity Amount" value={`₹${Math.round(result.maturity).toLocaleString('en-IN')}`} highlight />
+            <ResultCard title="Principal Invested" value={`₹${parseFloat(principal).toLocaleString('en-IN')}`} />
+            <ResultCard title="Interest Earned" value={`₹${Math.round(result.interest).toLocaleString('en-IN')}`} />
+          </div>
+        ) : (
+          <div className="h-full border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
+            Enter your FD details to see the maturity breakdown.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function RdCalculator() {
+  const [monthly, setMonthly] = useState<string>("5000");
+  const [rate, setRate] = useState<string>("7");
+  const [years, setYears] = useState<string>("5");
+  const [result, setResult] = useState<{ maturity: number, invested: number, interest: number } | null>(null);
+
+  const calculate = () => {
+    const P = parseFloat(monthly);
+    const r = parseFloat(rate) / 100 / 4;
+    const n = parseFloat(years) * 12;
+    if (P > 0 && r > 0 && n > 0) {
+      // RD formula: M = P * [(1+r)^n - 1] / (1 - (1+r)^(-1/3))
+      // Simplified quarterly compounding version used by Indian banks:
+      let maturity = 0;
+      for (let i = 1; i <= n; i++) {
+        maturity += P * Math.pow(1 + r, Math.ceil(i / 3));
+      }
+      const invested = P * n;
+      setResult({ maturity, invested, interest: maturity - invested });
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+      <Card className="border-0 shadow-lg shadow-black/5 bg-card/50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle>RD Calculator</CardTitle>
+          <CardDescription>Calculate your Recurring Deposit maturity value</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label>Monthly Deposit (₹)</Label>
+            <Input type="number" value={monthly} onChange={(e) => setMonthly(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Annual Interest Rate (%)</Label>
+            <Input type="number" value={rate} onChange={(e) => setRate(e.target.value)} className="bg-background" />
+          </div>
+          <div className="space-y-2">
+            <Label>Time Period (Years)</Label>
+            <Input type="number" value={years} onChange={(e) => setYears(e.target.value)} className="bg-background" />
+          </div>
+          <Button onClick={calculate} className="w-full h-12 text-lg font-semibold rounded-xl">Calculate Maturity</Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-6">
+        {result ? (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
+            <ResultCard title="Maturity Amount" value={`₹${Math.round(result.maturity).toLocaleString('en-IN')}`} highlight />
+            <ResultCard title="Total Deposited" value={`₹${Math.round(result.invested).toLocaleString('en-IN')}`} />
+            <ResultCard title="Interest Earned" value={`₹${Math.round(result.interest).toLocaleString('en-IN')}`} />
+          </div>
+        ) : (
+          <div className="h-full border-2 border-dashed border-border rounded-2xl flex items-center justify-center text-muted-foreground p-8 text-center bg-muted/10">
+            Enter your RD details to see projected returns.
           </div>
         )}
       </div>

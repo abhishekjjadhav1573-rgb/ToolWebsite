@@ -36,15 +36,12 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
           <nav className="hidden lg:flex items-center gap-6 text-sm font-medium ml-6">
             <Link href="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
-            {categories.map(cat => (
-              <span key={cat} className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                {cat} Tools
-              </span>
-            ))}
+            <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
+            <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
           </nav>
 
           <div className="ml-auto flex items-center space-x-4">
-            <nav className="hidden sm:flex items-center gap-4 text-sm font-medium text-muted-foreground">
+            <nav className="hidden sm:flex items-center gap-4 text-sm font-medium text-muted-foreground lg:hidden">
               <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
               <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
             </nav>

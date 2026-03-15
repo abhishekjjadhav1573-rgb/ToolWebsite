@@ -1,0 +1,96 @@
+Upgrade all Finance Tools in the Smart Utility Hub website to include complete professional financial metrics while keeping the same UI design, card layout, SPA behavior, and responsive structure.
+
+Apply these improvements to the following calculators:
+
+• EMI Calculator
+• SIP Calculator
+• Compound Interest Calculator
+• GST Calculator
+• Income Tax Calculator
+• FD Calculator
+• RD Calculator
+• Profit & Loss Calculator
+
+Important Requirement:
+
+Each calculator must display **only the professional metrics that are logically relevant to that specific tool**, instead of showing the same metrics across all tools.
+
+Examples of correct metric usage:
+
+EMI Calculator
+• Monthly EMI
+• Total Interest Payable
+• Total Payment (Principal + Interest)
+• Interest to Principal Ratio
+• Payment Breakdown (Principal vs Interest)
+• Loan Cost Summary
+• Amortization Breakdown
+
+SIP Calculator
+• Total Invested Amount
+• Estimated Returns
+• Final Maturity Value
+• Wealth Gain
+• CAGR (Compound Annual Growth Rate)
+• Investment Growth Percentage
+• Yearly Growth Breakdown
+
+Compound Interest Calculator
+• Final Value
+• Total Interest Earned
+• Effective Interest Rate
+• Growth Percentage
+• Interest Breakdown per year
+
+GST Calculator
+• Base Amount
+• GST Amount
+• Final Amount
+• CGST Amount
+• SGST Amount
+• IGST Amount
+• Tax Percentage Impact
+
+Income Tax Calculator
+• Taxable Income
+• Total Tax Payable
+• Net Income After Tax
+• Effective Tax Rate
+• Monthly Net Income
+• Tax Breakdown
+
+FD Calculator
+• Total Deposit
+• Interest Earned
+• Maturity Value
+• Effective Annual Yield
+• Growth Percentage
+• Interest Breakdown
+
+RD Calculator
+• Total Invested Amount
+• Total Interest Earned
+• Maturity Value
+• Effective Return Rate
+• Investment Growth Percentage
+
+Profit & Loss Calculator
+• Total Cost (including additional expenses)
+• Profit or Loss Amount
+• Profit Percentage
+• Profit Margin
+• Markup Percentage
+• Return on Investment (ROI)
+• Profit Per Unit
+• Total Profit (based on units sold)
+• Break-even Price
+• Recommended Selling Price based on desired profit %
+
+Display all results inside a structured **summary result panel** with clear sections such as:
+
+• Calculation Summary
+• Investment / Cost Summary
+• Interest or Profit Breakdown
+• Growth Metrics
+
+Ensure the results are **cleanly formatted and visually organized** within the existing card layout so the interface remains minimal, professional, and easy to read.

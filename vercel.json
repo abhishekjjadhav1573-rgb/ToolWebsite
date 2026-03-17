@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd artifacts/smart-utility-hub && pnpm run build",
-  "outputDirectory": "artifacts/smart-utility-hub/dist/public",
-  "installCommand": "pnpm install"
+  "framework": "vite",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist"
 }

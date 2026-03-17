@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "buildCommand": "cd artifacts/smart-utility-hub && pnpm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "artifacts/smart-utility-hub/dist",
   "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
 }

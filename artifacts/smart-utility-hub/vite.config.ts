@@ -43,7 +43,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    outDir: "../../dist",
+    outDir: "dist",
     emptyOutDir: true,
     sourcemap: false,
   },

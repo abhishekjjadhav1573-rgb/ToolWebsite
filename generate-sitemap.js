@@ -53,9 +53,10 @@ function generateSitemap() {
 
 // Write sitemap to file
 const sitemapPath = path.join(__dirname, 'public', 'sitemap.xml');
+console.log('Sitemap will be written to:', sitemapPath);
 fs.writeFileSync(sitemapPath, generateSitemap(), 'utf8');
 
-console.log('Sitemap generated successfully at public/sitemap.xml');
+console.log('Sitemap generated successfully at:', sitemapPath);
 
 // Run the script
 // node generate-sitemap.js

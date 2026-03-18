@@ -1,0 +1,25 @@
+<svg width="324" height="324" viewBox="0 0 454 454" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3B6EDC"/>
+      <stop offset="100%" stop-color="#3F83F8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="454" height="454" rx="91" fill="url(#bg)"/>
+
+  <!-- Cube -->
+  <g transform="translate(-43,-50) scale(3.0)" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Top face -->
+    <path d="M90 45 L135 70 L90 95 L45 70 Z"/>
+
+    <!-- Left face -->
+    <path d="M45 70 L45 115 L90 140 L90 95"/>
+
+    <!-- Right face -->
+    <path d="M135 70 L135 115 L90 140"/>
+
+  </g>
+</svg>
